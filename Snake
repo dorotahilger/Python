@@ -1,0 +1,146 @@
+import turtle
+import time
+import random
+
+def snake():
+    
+    wynik = 0
+    rekord = 0
+
+    okno = turtle.Screen()
+    okno.title("Snake")
+    okno.bgcolor("lightblue")
+    okno.setup(width=600, height=600)
+    
+    wąż = turtle.Turtle()
+    wąż.speed(0)
+    wąż.shape("square")
+    wąż.color("black")
+    wąż.penup()
+    wąż.direction = "stop"
+
+    jedzenie = turtle.Turtle()
+    jedzenie.speed(0)
+    jedzenie.shape("circle")
+    jedzenie.color("white")
+    jedzenie.penup()
+    jedzenie.direction = "stop"
+    jedzenie.goto(0, 100)
+
+    ogon = []
+
+    napis = turtle.Turtle()
+    napis.speed(0)
+    napis.color("black")
+    napis.penup()
+    napis.hideturtle()
+    napis.goto(0, 220)
+    napis.write("Score: 0  High Score: 0", align="center", font=("Courier", 24, "normal"))
+
+    def do_góry():
+        wąż.direction = "up"
+    
+    def na_dół():
+        wąż.direction = "down"
+
+    def na_lewo():
+        wąż.direction = "left"
+    
+    def na_prawo():
+        wąż.direction = "right"
+
+    okno.listen()
+    okno.onkeypress(do_góry, "w")
+    okno.onkeypress(na_dół, "s")
+    okno.onkeypress(na_lewo, "a")
+    okno.onkeypress(na_prawo, "d")
+
+    def ruch():
+        if wąż.direction == "up":
+            y = wąż.ycor()
+            wąż.sety(y + 20)
+
+        if wąż.direction == "down":
+            y = wąż.ycor()
+            wąż.sety(y - 20)
+
+        if wąż.direction == "left":
+            x = wąż.xcor()
+            wąż.setx(x - 20)
+
+        if wąż.direction == "right":
+            x = wąż.xcor()
+            wąż.setx(x + 20)
+        
+        time.sleep(0.1)
+    
+
+    while True:
+
+        okno.update()
+        ruch()
+    
+        if wąż.xcor()>290 or wąż.xcor()<-290 or wąż.ycor()>290 or wąż.ycor()<-290:
+            time.sleep(1)
+            wąż.goto(0,0)
+            wąż.direction = "stop"
+        
+            for część in ogon:
+                część.goto(1000, 1000)
+            
+            ogon.clear()
+            wynik = 0 
+
+            napis.clear()
+            napis.write("Score: {}  High Score: {}".format(wynik, rekord), align="center", font=("Courier", 24, "normal"))
+        
+        if wąż.distance(jedzenie) < 20:
+            x = random.randint(-290, 290)
+            y = random.randint(-290, 290)
+            jedzenie.goto(x,y)
+
+            część = turtle.Turtle()
+            część.speed(0)
+            część.shape("square")
+            część.color("grey")
+            część.penup()
+            ogon.append(część)
+    
+
+            wynik += 10
+
+            if wynik > rekord:
+                rekord = wynik
+        
+            napis.clear()
+            napis.write("Score: {}  High Score: {}".format(wynik, rekord), align="center", font=("Courier", 24, "normal"))
+
+        for część in ogon:
+            if część.distance(wąż) < 20:
+                time.sleep(1)
+                wąż.goto(0,0)
+                wąż.direction = "stop"
+        
+                for część in ogon:
+                    część.goto(1000, 1000)
+            
+                ogon.clear()
+                wynik = 0 
+
+                napis.clear()
+                napis.write("Score: {}  High Score: {}".format(wynik, rekord), align="center", font=("Courier", 24, "normal"))
+        
+
+        ilość_części = len(ogon)
+
+        for index in range(ilość_części-1, 0, -1):
+            x = ogon[index-1].xcor()
+            y = ogon[index-1].ycor()
+            ogon[index].goto(x,y)
+
+        if ilość_części > 0:
+            x = wąż.xcor()
+            y = wąż.ycor()
+            ogon[0].goto(x, y)
+
+snake()
